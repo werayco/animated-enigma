@@ -193,8 +193,6 @@ if image is not None and st.button("Analyze Food", type="primary"):
                 for i, item in enumerate(claude_result["food_items"], 1):
                     claude_data.append([f"Food Item {i}", item.get("item", "N/A")])
                     claude_data.append([f"Quantity {i}", item.get("estimated_quantities", "N/A")])
-                    claude_data.append([f"Cooking Method {i}", item.get("cooking_method", "N/A")])
-                    claude_data.append([f"Cuisine Type {i}", item.get("cuisine_type", "N/A")])
             
             claude_df = pd.DataFrame(claude_data, columns=["Attribute", "Value"])
             st.dataframe(claude_df, hide_index=True)
@@ -213,8 +211,6 @@ if image is not None and st.button("Analyze Food", type="primary"):
                 for i, item in enumerate(gemini_result["food_items"], 1):
                     gemini_data.append([f"Food Item {i}", item.get("item", "N/A")])
                     gemini_data.append([f"Quantity {i}", item.get("estimated_quantities", "N/A")])
-                    gemini_data.append([f"Cooking Method {i}", item.get("cooking_method", "N/A")])
-                    gemini_data.append([f"Cuisine Type {i}", item.get("cuisine_type", "N/A")])
             
             gemini_df = pd.DataFrame(gemini_data, columns=["Attribute", "Value"])
             st.dataframe(gemini_df, hide_index=True)
