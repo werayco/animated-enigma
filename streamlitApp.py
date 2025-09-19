@@ -23,12 +23,12 @@ model = genai.GenerativeModel("gemini-2.5-flash")
 
 class ModelTest:
     @staticmethod
-    def claudeModel(image_path):
+    def claudeModel(image_path, modelName):
         with open(image_path, "rb") as f:
             image_base64 = base64.b64encode(f.read()).decode("utf-8")
 
         message = client.messages.create(
-            model="claude-3-haiku-20240307", 
+            model=modelName, 
             max_tokens=500,
             messages=[
                 {
@@ -145,9 +145,9 @@ class ModelTest:
             return {"email_category": "unknown", "confidence_level": 0}
         
     @staticmethod
-    def threadPoolExecutorModels(image_path):
+    def threadPoolExecutorModels(image_path, modelName):
         with ThreadPoolExecutor(max_workers=3) as workers:
-            claudeFuture = workers.submit(ModelTest.claudeModel, image_path)
+            claudeFuture = workers.submit(ModelTest.claudeModel, image_path, modelName)
             geminiFuture = workers.submit(ModelTest.detect_food_with_gemini, image_path)
 
         claudeResult: dict = claudeFuture.result()
@@ -164,6 +164,13 @@ image = st.file_uploader(
     help="Upload an image of food for AI analysis"
 )
 
+claudeModelName = st.selectbox(
+    "Choose your Claude model",
+    ["claude-3-haiku-20240307", "claude-3-5-haiku-20241022"],
+    index=0,
+    help="Pick between Claude 3 Haiku (2024-03-07) and Claude 3.5 Haiku (2024-10-22)"
+)
+
 if image is not None and st.button("Analyze Food", type="primary"):
     st.subheader("Analysis Results")
     
@@ -173,7 +180,7 @@ if image is not None and st.button("Analyze Food", type="primary"):
         temp_path = tmp_file.name
         
         with st.spinner("Analyzing image..."):
-            claude_result, gemini_result = ModelTest.threadPoolExecutorModels(temp_path)
+            claude_result, gemini_result = ModelTest.threadPoolExecutorModels(temp_path, claudeModelName)
     
     os.unlink(temp_path)
     col1, col2 = st.columns(2)
