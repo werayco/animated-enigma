@@ -4,6 +4,9 @@ import base64
 import os
 import httpx
 
+def amountCounter(input_tokens: int, charge: float = 0.80):
+    return (input_tokens / 1_000_000) * charge
+
 # Load environment variables
 CLAUDE_API_KEY = st.secrets["CLAUDE_API_KEY"]
 
@@ -55,6 +58,7 @@ if uploaded_file is not None:
         )
 
         st.success(f"Estimated input tokens: {response.input_tokens}")
+        st.markdown(f"The input token price will be **${amountCounter(response.input_tokens):.6f} USD**")
 
     except Exception as e:
         st.error(f"Error: {str(e)}")
